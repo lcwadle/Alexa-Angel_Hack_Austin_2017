@@ -44,6 +44,7 @@ var handlers = {
 
             this.emit(':tellWithCard', speechOutput, SKILL_NAME);
         }
+        shouldEndSession = false;
     },
     'AMAZON.HelpIntent': function () {
         var speechOutput = "You can say move left or move right, or, you can say exit... What can I help you with?";
