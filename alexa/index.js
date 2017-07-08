@@ -36,29 +36,29 @@ var handlers = {
 
         var speechOutput = 'Move' + moveType;
 
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
     'GetRoom' : function () {
         // Get basic room description
         var speechOutput = "Beginning Room";
 
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
     'MoveLeft' : function () {
-        var speechOutput = "Left Room"
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
+        var speechOutput = "Left Room";
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
     'MoveRight': function () {
-        var speechOutput = "Right Room"
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
+        var speechOutput = "Right Room";
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
     'MoveStraight': function () {
-        var speechOutput = "Straight Room"
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
+        var speechOutput = "Straight Room";
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
     'Move': function () {
-        var speechOutput = "Move"
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
+        var speechOutput = "Move";
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
     'AMAZON.HelpIntent': function () {
         var speechOutput = "You can say move left or move right, or, you can say exit... What can I help you with?";
