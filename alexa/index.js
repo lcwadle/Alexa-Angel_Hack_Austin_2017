@@ -31,6 +31,9 @@ var handlers = {
     'MoveStraightIntent': function () {
         this.emit('MoveStraight');
     },
+    'MoveIntent': function () {
+        this.emit('Move');
+    },
     'GetRoom' : function () {
         // Get basic room description
         var speechOutput = "Beginning Room";
@@ -47,6 +50,10 @@ var handlers = {
     },
     'MoveStraight': function () {
         var speechOutput = "Straight Room"
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
+    },
+    'Move': function () {
+        var speechOutput = "Move"
         this.emit(':tellWithCard', speechOutput, SKILL_NAME)
     },
     'AMAZON.HelpIntent': function () {
