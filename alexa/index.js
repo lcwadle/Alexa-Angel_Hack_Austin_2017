@@ -1,6 +1,6 @@
 'use strict';
 var Alexa = require('alexa-sdk');
-var http = require('http');
+var https = require('https');
 
 var APP_ID = undefined; //OPTIONAL: replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 var SKILL_NAME = 'dungeon companion';
@@ -20,7 +20,7 @@ var handlers = {
     'LaunchRequest': function () {
         var response = null;
 
-        http.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
+        https.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
             const { statusCode } = res;
             const contentType = res.headers['content-type'];
 
@@ -45,7 +45,7 @@ var handlers = {
             res.on('end', () => {
                 try {
                     const parsedData = JSON.parse(rawData);
-                    response = parsedData;
+                    this.emit(':tellWithCard', parsedData, SKILL_NAME);
                 } catch (e) {
                     response = e.message;
                 }
