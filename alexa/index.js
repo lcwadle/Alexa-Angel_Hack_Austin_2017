@@ -1,5 +1,6 @@
 'use strict';
 var Alexa = require('alexa-sdk');
+var http = require('http');
 
 var APP_ID = undefined; //OPTIONAL: replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 var SKILL_NAME = 'dungeon companion';
@@ -17,13 +18,43 @@ exports.handler = function(event, context, callback) {
 
 var handlers = {
     'LaunchRequest': function () {
-        var connection = new XMLHttpRequest();
-        connection.open("GET", "https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms", false);
-        connection.send();
+        var response = null;
 
-        var response = connection.response;
+        http.get('http://nodejs.org/dist/index.json', (res) => {
+            const { statusCode } = res;
+            const contentType = res.headers['content-type'];
 
-        this.emit(':tellWithCard', response.toString(), SKILL_NAME);
+            let error;
+            if (statusCode !== 200) {
+                error = new Error('Request Failed.\n' +
+                                  `Status Code: ${statusCode}`);
+            } else if (!/^application\/json/.test(contentType)) {
+                error = new Error('Invalid content-type.\n' +
+                                  `Expected application/json but received ${contentType}`);
+            }
+            if (error) {
+                console.error(error.message);
+                // consume response data to free up memory
+                res.resume();
+                return;
+            }
+
+            res.setEncoding('utf8');
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+                try {
+                    const parsedData = JSON.parse(rawData);
+                    response = parsedData;
+                } catch (e) {
+                    response = e;
+                }
+            });
+        }).on('error', (e) => {
+            console.error(`Got error: ${e.message}`);
+        });
+
+        this.emit(':tellWithCard', response, SKILL_NAME);
     },
     'GetRoomIntent' : function () {
         this.emit('GetRoom');
