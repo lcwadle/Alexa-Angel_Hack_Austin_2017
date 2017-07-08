@@ -23,14 +23,17 @@ var handlers = {
         this.emit('GetRoom');
     },
     'MoveIntent': function () {
-        var moveType = this.event.request.intent.slots.Movement.value;
-        var speechOutput = "Move " + moveType;
-
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        this.emit('Move');
     },
     'GetRoom' : function () {
         // Get basic room description
         var speechOutput = "Beginning Room";
+
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+    },
+    'Move': function () {
+        var moveType = this.event.request.intent.slots.Movement.value;
+        var speechOutput = 'Move' + moveType;
 
         this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
