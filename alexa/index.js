@@ -33,9 +33,17 @@ var handlers = {
     },
     'Move': function () {
         var moveType = this.event.request.intent.slots.Movement.value;
-        var speechOutput = 'Move ' + moveType;
 
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        if (moveType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'Move ' + moveType;
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
     },
     'AMAZON.HelpIntent': function () {
         var speechOutput = "You can say move left or move right, or, you can say exit... What can I help you with?";
