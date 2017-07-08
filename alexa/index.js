@@ -45,8 +45,8 @@ var handlers = {
             res.on('end', () => {
                 try {
                     const parsedData = JSON.parse(rawData);
-                    var description = parsedData[0][0];
-                    this.emit(':tellWithCard', parsedData, SKILL_NAME);
+                    var description = parsedData[0]['description'];
+                    this.emit(':tellWithCard', description, SKILL_NAME);
                 } catch (e) {
                     response = e.message;
                 }
