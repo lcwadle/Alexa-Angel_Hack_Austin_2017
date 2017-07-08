@@ -20,7 +20,7 @@ var handlers = {
     'LaunchRequest': function () {
         var response = null;
 
-        http.get('http://nodejs.org/dist/index.json', (res) => {
+        http.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
             const { statusCode } = res;
             const contentType = res.headers['content-type'];
 
@@ -47,7 +47,7 @@ var handlers = {
                     const parsedData = JSON.parse(rawData);
                     response = parsedData;
                 } catch (e) {
-                    response = e;
+                    response = e.message;
                 }
             });
         }).on('error', (e) => {
