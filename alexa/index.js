@@ -22,11 +22,29 @@ var handlers = {
     'GetRoomIntent' : function () {
         this.emit('GetRoom');
     },
+    'MoveLeftIntent' : function () {
+        this.emit('MoveLeft');
+    },
+    'MoveRightIntent': function () {
+        this.emit('MoveRight');
+    },
+    'MoveStraightIntent': function () {
+        this.emit('MoveStraight');
+    },
     'GetRoom' : function () {
         // Get basic room description
-        var speechOutput = "Your room has 3 doors, one on the left, one on the right, and one straight ahead.";
+        var speechOutput = "Beginning Room";
 
         this.emit(':tellWithCard', speechOutput, SKILL_NAME)
+    },
+    'MoveLeft' : function () {
+        var speechOutput = "Left Room"
+    },
+    'MoveRight': function () {
+        var speechOutput = "Right Room"
+    },
+    'MoveStraight': function () {
+        var speechOutput = "Straight Room"
     },
     'AMAZON.HelpIntent': function () {
         var speechOutput = "You can say tell me a bacon fact, or, you can say exit... What can I help you with?";
