@@ -19,6 +19,9 @@ var handlers = {
     'LaunchRequest': function () {
         this.emit('GetRoom');
     },
+    'GetRoomIntent' : function () {
+        this.emit('GetRoom');
+    },
     'GetRoom' : function () {
         // Get basic room description
         var speechOutput = "Your room has 3 doors, one on the left, one on the right, and one straight ahead.";
