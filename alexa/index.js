@@ -23,7 +23,22 @@ var handlers = {
         this.emit('GetRoom');
     },
     'MoveIntent': function () {
-        this.emit('Move');
+        this.emit('move');
+    },
+    'PickUpIntent' : function () {
+        this.emit('pickUp');
+    },
+    'TouchIntent': function () {
+        this.emit('touch');
+    },
+    'DropIntent': function () {
+        this.emit('drop');
+    },
+    'LookAtIntent': function () {
+        this.emit('lookAt');
+    },
+    'OpenIntent': function () {
+        this.emit('open');
     },
     'GetRoom' : function () {
         // Get basic room description
@@ -31,7 +46,7 @@ var handlers = {
 
         this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
-    'Move': function () {
+    'move': function () {
         var moveType = this.event.request.intent.slots.Movement.value;
 
         if (moveType == null) {
@@ -45,6 +60,76 @@ var handlers = {
             this.emit(':tellWithCard', speechOutput, SKILL_NAME);
         }
         shouldEndSession = false;
+    },
+    'pickUp' : function () {
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'Picked up ' + interactType;
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+    },
+    'touch': function () {
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'Touched ' + interactType;
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+    },
+    'drop': function () {
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'Dropped ' + interactType;
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+    },
+    'lookAt': function () {
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'Looked at ' + interactType;
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+    },
+    'open': function () {
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'Opened ' + interactType;
+
+            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+        }
     },
     'AMAZON.HelpIntent': function () {
         var speechOutput = "You can say move left or move right, or, you can say exit... What can I help you with?";
