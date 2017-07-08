@@ -39,15 +39,18 @@ var handlers = {
     },
     'MoveLeft' : function () {
         var speechOutput = "Left Room"
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
     },
     'MoveRight': function () {
         var speechOutput = "Right Room"
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
     },
     'MoveStraight': function () {
         var speechOutput = "Straight Room"
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
     },
     'AMAZON.HelpIntent': function () {
-        var speechOutput = "You can say tell me a bacon fact, or, you can say exit... What can I help you with?";
+        var speechOutput = "You can say move left or move right, or, you can say exit... What can I help you with?";
         var reprompt = "What can I help you with?";
         this.emit(':ask', speechOutput, reprompt);
     },
