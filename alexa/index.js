@@ -17,7 +17,13 @@ exports.handler = function(event, context, callback) {
 
 var handlers = {
     'LaunchRequest': function () {
-        this.emit('GetRoom');
+        var connection = new XMLHttpRequest();
+        connection.open("GET", "https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms", false);
+        connection.send();
+
+        var response = connection.response;
+
+        this.emit(':tellWithCard', response.toString(), SKILL_NAME);
     },
     'GetRoomIntent' : function () {
         this.emit('GetRoom');
