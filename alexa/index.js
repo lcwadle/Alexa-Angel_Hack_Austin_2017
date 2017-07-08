@@ -70,5 +70,8 @@ var handlers = {
     },
     'AMAZON.StopIntent': function () {
         this.emit(':tell', 'Goodbye!');
+    },
+    'Unhandled': function () {
+        this.emit(':tell', "Error");
     }
 };
