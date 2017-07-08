@@ -33,7 +33,7 @@ var handlers = {
     },
     'Move': function () {
         var moveType = this.event.request.intent.slots.Movement.value;
-        var speechOutput = 'Move' + moveType;
+        var speechOutput = 'Move ' + moveType;
 
         this.emit(':tellWithCard', speechOutput, SKILL_NAME);
     },
