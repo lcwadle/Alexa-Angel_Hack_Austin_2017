@@ -32,7 +32,8 @@ var handlers = {
         this.emit('MoveStraight');
     },
     'MoveIntent': function () {
-        this.emit('Move');
+        var moveType = this.event.request.intent.slots.Movement.value;
+        this.emit('Move' + moveType);
     },
     'GetRoom' : function () {
         // Get basic room description
