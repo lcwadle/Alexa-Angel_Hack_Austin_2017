@@ -33,7 +33,10 @@ var handlers = {
     },
     'MoveIntent': function () {
         var moveType = this.event.request.intent.slots.Movement.value;
-        this.emit('Move' + moveType);
+
+        var speechOutput = 'Move' + moveType;
+
+        this.emit(':tellWithCard', speechOutput, SKILL_NAME)
     },
     'GetRoom' : function () {
         // Get basic room description
