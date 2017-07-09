@@ -113,9 +113,44 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
-            var speechOutput = 'You move ' + moveType;
+            var response = null;
+            var link = "http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms" + session.currentRoom.id;
 
-            this.emit(':ask', speechOutput, SKILL_NAME);
+            http.get(link, (res) => {
+                const { statusCode } = res;
+                const contentType = res.headers['content-type'];
+
+                let error;
+                if (statusCode !== 200) {
+                    error = new Error('Request Failed.\n' +
+                                      `Status Code: ${statusCode}`);
+                } else if (!/^application\/json/.test(contentType)) {
+                    error = new Error('Invalid content-type.\n' +
+                                      `Expected application/json but received ${contentType}`);
+                }
+                if (error) {
+                    console.error(error.message);
+                    res.resume();
+                    return;
+                }
+
+                res.setEncoding('utf8');
+                let rawData = '';
+                res.on('data', (chunk) => { rawData += chunk; });
+                res.on('end', () => {
+                    try {
+                        const parsedData = JSON.parse(rawData);
+                        session.currentRoom = _lodash.clone(parsedData[0]);
+
+                        var description = "You enter a room.  " + session.currentRoom.description;
+                        this.emit(':ask', description, SKILL_NAME);
+                    } catch (e) {
+                        response = e.message;
+                    }
+                });
+            }).on('error', (e) => {
+                console.error(`Got error: ${e.message}`);
+            });
         }
     },
     'PickUpIntent' : function () {
