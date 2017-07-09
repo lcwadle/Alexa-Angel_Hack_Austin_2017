@@ -71,7 +71,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             res.on('end', () => {
                 try {
                     const parsedData = JSON.parse(rawData);
-                    var description = parsedData[0]['description'];
+                    var description = "You enter a room.  " + parsedData[0]['description'];
                     this.emit(':ask', description, SKILL_NAME);
                 } catch (e) {
                     response = e.message;
@@ -91,116 +91,86 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
-            var speechOutput = 'Move ' + moveType;
+            var speechOutput = 'You move ' + moveType;
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
     },
     'PickUpIntent' : function () {
-        this.emit('pickUp');
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'You pick up ' + interactType;
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
     },
     'TouchIntent': function () {
-        this.emit('touch');
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'You touched ' + interactType;
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
     },
     'DropIntent': function () {
-        this.emit('drop');
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'You drop ' + interactType;
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
     },
     'LookAtIntent': function () {
-        this.emit('lookAt');
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'You looked at ' + interactType;
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
     },
     'OpenIntent': function () {
-        this.emit('open');
-    },
-    'AMAZON.HelpIntent': function () {
-        this.emit(':ask', helpMessage, helpMessage);
+        var interactType = this.event.request.intent.slots.Interaction.value;
+
+        if (interactType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'You open ' + interactType;
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
     },
     'Unhandled': function () {
         this.emit(':ask', promptToStartMessage, promptToStartMessage);
     },
-    'move': function () {
-        var moveType = this.event.request.intent.slots.Movement.value;
-
-        if (moveType == null) {
-            var speechOutput = "I cannot understand";
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-        else {
-            var speechOutput = 'Move ' + moveType;
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-        shouldEndSession = false;
-    },
-    'pickUp' : function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
-
-        if (interactType == null) {
-            var speechOutput = "I cannot understand";
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-        else {
-            var speechOutput = 'Picked up ' + interactType;
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-    },
-    'touch': function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
-
-        if (interactType == null) {
-            var speechOutput = "I cannot understand";
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-        else {
-            var speechOutput = 'Touched ' + interactType;
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-    },
-    'drop': function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
-
-        if (interactType == null) {
-            var speechOutput = "I cannot understand";
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-        else {
-            var speechOutput = 'Dropped ' + interactType;
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-    },
-    'lookAt': function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
-
-        if (interactType == null) {
-            var speechOutput = "I cannot understand";
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-        else {
-            var speechOutput = 'Looked at ' + interactType;
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-    },
-    'open': function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
-
-        if (interactType == null) {
-            var speechOutput = "I cannot understand";
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
-        else {
-            var speechOutput = 'Opened ' + interactType;
-
-            this.emit(':ask', speechOutput, SKILL_NAME);
-        }
+    'AMAZON.HelpIntent': function () {
+        this.emit(':ask', helpMessage, helpMessage);
     },
     'AMAZON.CancelIntent': function () {
         this.emit(':tell', 'Goodbye!');
