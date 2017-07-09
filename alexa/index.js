@@ -26,7 +26,7 @@ var promptToStartMessage = "Say yes to continue, or no to end the game.";
 exports.handler = function(event, context, callback) {
     var alexa = Alexa.handler(event, context);
     alexa.APP_ID = APP_ID;
-    alexa.registerHandlers(newSessionHandler, startGameHandlers);
+    alexa.registerHandlers(newSessionHandler, startGameHandlers, interactGameHandlers);
     alexa.execute();
 };
 
@@ -34,7 +34,7 @@ exports.handler = function(event, context, callback) {
 var newSessionHandler = {
     'LaunchRequest': function () {
         this.handler.state = states.DESCRIBEMODE;
-        this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
+        this.emit(':ask', welcomeMessage, repeatWelcomeMessage, interactGameHandlers);
     },
     'AMAZON.HelpIntent': function () {
         this.handler.state = states.STARTMODE;
@@ -49,12 +49,9 @@ var newSessionHandler = {
 var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
     'GetRoomIntent' : function () {
         this.handler.state = states.INTERACTMODE;
-        this.emit('GetRoom');
-        
-    },
-    'GetRoom' : function () {
-        var response = null;
-                https.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
+        //this.emit(':ask', "We are here");
+                var response = null;
+        http.get('http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
             const { statusCode } = res;
             const contentType = res.headers['content-type'];
 
@@ -88,6 +85,13 @@ var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
         }).on('error', (e) => {
             console.error(`Got error: ${e.message}`);
         });
+        
+    },
+    'afunction' : function () {
+        this.emit(':ask', helpMessage, helpMessage);
+    },
+    'GetRoom' : function () {
+
         
     },
     'AMAZON.HelpIntent': function () {
