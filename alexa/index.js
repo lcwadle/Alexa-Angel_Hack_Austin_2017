@@ -34,51 +34,53 @@ exports.handler = function(event, context, callback) {
 var newSessionHandler = {
     'LaunchRequest': function () {
         this.handler.state = states.DESCRIPTIONMODE;
+    }
 };
 
 var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
     'GetRoomIntent' : function () {
         this.emit('GetRoom');
-        this.handler.state = states.ASKMODE;
+        this.handler.state = states.INTERACTMODE;
     },
     'GetRoom' : function () {
-    var response = null;
+        var response = null;
 
-    https.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
-        const { statusCode } = res;
-        const contentType = res.headers['content-type'];
+        https.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
+            const { statusCode } = res;
+            const contentType = res.headers['content-type'];
 
-        let error;
-        if (statusCode !== 200) {
-            error = new Error('Request Failed.\n' +
-                              `Status Code: ${statusCode}`);
-        } else if (!/^application\/json/.test(contentType)) {
-            error = new Error('Invalid content-type.\n' +
-                              `Expected application/json but received ${contentType}`);
-        }
-        if (error) {
-            console.error(error.message);
-            // consume response data to free up memory
-            res.resume();
-            return;
-        }
-
-        res.setEncoding('utf8');
-        let rawData = '';
-        res.on('data', (chunk) => { rawData += chunk; });
-        res.on('end', () => {
-            try {
-                const parsedData = JSON.parse(rawData);
-                var description = parsedData[0]['description'];
-                this.emit(':tellWithCard', description, SKILL_NAME);
-            } catch (e) {
-                response = e.message;
+            let error;
+            if (statusCode !== 200) {
+                error = new Error('Request Failed.\n' +
+                                  `Status Code: ${statusCode}`);
+            } else if (!/^application\/json/.test(contentType)) {
+                error = new Error('Invalid content-type.\n' +
+                                  `Expected application/json but received ${contentType}`);
             }
+            if (error) {
+                console.error(error.message);
+                // consume response data to free up memory
+                res.resume();
+                return;
+            }
+
+            res.setEncoding('utf8');
+            let rawData = '';
+            res.on('data', (chunk) => { rawData += chunk; });
+            res.on('end', () => {
+                try {
+                    const parsedData = JSON.parse(rawData);
+                    var description = parsedData[0]['description'];
+                    this.emit(':tellWithCard', description, SKILL_NAME);
+                } catch (e) {
+                    response = e.message;
+                }
+            });
+        }).on('error', (e) => {
+            console.error(`Got error: ${e.message}`);
         });
-    }).on('error', (e) => {
-        console.error(`Got error: ${e.message}`);
-    });
-};
+    }
+});
 
 var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     'MoveIntent': function () {
@@ -100,11 +102,9 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         this.emit('open');
     },
     'AMAZON.HelpIntent': function () {
-        this.handler.state = states.DESCRIPTIONMODE;
         this.emit(':ask', helpMessage, helpMessage);
     },
     'Unhandled': function () {
-        this.handler.state = states.DESCRIPTIONMODE;
         this.emit(':ask', promptToStartMessage, promptToStartMessage);
     },
     'move': function () {
@@ -206,4 +206,4 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     'Unhandled': function () {
         this.emit(':tell', "Error");
     }
-};
+});
