@@ -32,12 +32,14 @@ exports.handler = function(event, context, callback) {
 // set state to start up and  welcome the user
 var newSessionHandler = {
     'LaunchRequest': function () {
-        // New Game?
+        this.emit(':ask', welcomeMessage, repeatWelcomeMessage); 
+    },
+    "YesIntent" : function () {
         this.handler.state = states.INTERACTMODE;
-        this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
-
-        // Existing Game?
-      
+        this.emit(':ask', "What would you like to do?");
+    },
+    "NoIntent" : function () {
+        this.emit(':tell', "Goodbye");
     }
 };
 
@@ -107,7 +109,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         else {
             var speechOutput = 'You pick up ' + interactType;
 
-            this.emit(':ask', speechOutput, SKILL_NAME);
+            this.emit(':ask', event.session.userId, SKILL_NAME);
         }
     },
     'TouchIntent': function () {
