@@ -25,7 +25,7 @@ var promptToStartMessage = "Say yes to continue, or no to end the game.";
 exports.handler = function(event, context, callback) {
     var alexa = Alexa.handler(event, context);
     alexa.APP_ID = APP_ID;
-    alexa.registerHandlers(newSessionHandler, startGameHandlers, interactGameHandlers);
+    alexa.registerHandlers(newSessionHandler, interactGameHandlers);
     alexa.execute();
 };
 
@@ -83,7 +83,18 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         
     },
     'MoveIntent': function () {
-        this.emit('move');
+        var moveType = this.event.request.intent.slots.Movement.value;
+
+        if (moveType == null) {
+            var speechOutput = "I cannot understand";
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
+        else {
+            var speechOutput = 'Move ' + moveType;
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
     },
     'PickUpIntent' : function () {
         this.emit('pickUp');
