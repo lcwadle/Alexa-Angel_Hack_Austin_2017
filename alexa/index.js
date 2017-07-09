@@ -1,6 +1,7 @@
 'use strict';
 var Alexa = require('alexa-sdk');
 var http = require('http');
+var request = require('request');
 
 var APP_ID = undefined; //OPTIONAL: replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 var SKILL_NAME = 'dungeon companion';
@@ -32,6 +33,15 @@ exports.handler = function(event, context, callback) {
 // set state to start up and  welcome the user
 var newSessionHandler = {
     'LaunchRequest': function () {
+        request.post(
+            'http://angelhack-10-dungeon-companion.mybluemix.net/api/playersessions/sayhi',
+            { json: { userID: this.event.session.user.userId } },
+            function (error, response, body) {
+                if (!error && response.statusCode == 200) {
+                    console.log(body)
+                }
+            }
+        );
         this.emit(':ask', welcomeMessage, repeatWelcomeMessage); 
     },
     "YesIntent" : function () {
@@ -120,7 +130,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         else {
             var speechOutput = 'You pick up the ' + interactType;
 
-            this.emit(':ask', this.event.session.userId, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
     },
     'TouchIntent': function () {
