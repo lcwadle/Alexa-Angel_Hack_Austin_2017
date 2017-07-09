@@ -26,7 +26,7 @@ var promptToStartMessage = "Say yes to continue, or no to end the game.";
 exports.handler = function(event, context, callback) {
     var alexa = Alexa.handler(event, context);
     alexa.APP_ID = APP_ID;
-    alexa.registerHandlers(newSessionHandler, startGameHandlers, );
+    alexa.registerHandlers(newSessionHandler, startGameHandlers);
     alexa.execute();
 };
 
