@@ -5,8 +5,7 @@ var http = require('http');
 var APP_ID = undefined; //OPTIONAL: replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 var SKILL_NAME = 'dungeon companion';
 
-var states = {
-    DESCRIBEMODE: '_DESCRIBEMODE',          // Describes the current room to the user
+var states = {        
     INTERACTMODE: '_INTERACTMODE',          // Asks user what action should be taken
     OUTPUTMODE: '_OUTPUTMODE'               // Describes effect of action taken
 };
@@ -33,24 +32,20 @@ exports.handler = function(event, context, callback) {
 // set state to start up and  welcome the user
 var newSessionHandler = {
     'LaunchRequest': function () {
-        this.handler.state = states.DESCRIBEMODE;
-        this.emit(':ask', welcomeMessage, repeatWelcomeMessage, interactGameHandlers);
-    },
-    'AMAZON.HelpIntent': function () {
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', helpMessage, helpMessage);
-    },
-    'Unhandled': function () {
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', promptToStartMessage, promptToStartMessage);
+        // New Game?
+        this.handler.state = states.INTERACTMODE;
+        this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
+
+        // Existing Game?
+      
     }
 };
 
-var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
+var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     'GetRoomIntent' : function () {
         this.handler.state = states.INTERACTMODE;
         //this.emit(':ask', "We are here");
-                var response = null;
+        var response = null;
         http.get('http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
             const { statusCode } = res;
             const contentType = res.headers['content-type'];
@@ -77,7 +72,7 @@ var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
                 try {
                     const parsedData = JSON.parse(rawData);
                     var description = parsedData[0]['description'];
-                    this.emit(':tellWithCard', description, SKILL_NAME);
+                    this.emit(':ask', description, SKILL_NAME);
                 } catch (e) {
                     response = e.message;
                 }
@@ -87,24 +82,6 @@ var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
         });
         
     },
-    'afunction' : function () {
-        this.emit(':ask', helpMessage, helpMessage);
-    },
-    'GetRoom' : function () {
-
-        
-    },
-    'AMAZON.HelpIntent': function () {
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', helpMessage, helpMessage);
-    },
-    'Unhandled': function () {
-        this.handler.state = states.STARTMODE;
-        this.emit(':ask', promptToStartMessage, promptToStartMessage);
-    }
-});
-
-var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     'MoveIntent': function () {
         this.emit('move');
     },
@@ -135,12 +112,12 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         if (moveType == null) {
             var speechOutput = "I cannot understand";
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
             var speechOutput = 'Move ' + moveType;
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
         shouldEndSession = false;
     },
@@ -150,12 +127,12 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         if (interactType == null) {
             var speechOutput = "I cannot understand";
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
             var speechOutput = 'Picked up ' + interactType;
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
     },
     'touch': function () {
@@ -164,12 +141,12 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         if (interactType == null) {
             var speechOutput = "I cannot understand";
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
             var speechOutput = 'Touched ' + interactType;
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
     },
     'drop': function () {
@@ -178,12 +155,12 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         if (interactType == null) {
             var speechOutput = "I cannot understand";
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
             var speechOutput = 'Dropped ' + interactType;
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
     },
     'lookAt': function () {
@@ -192,12 +169,12 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         if (interactType == null) {
             var speechOutput = "I cannot understand";
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
             var speechOutput = 'Looked at ' + interactType;
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
     },
     'open': function () {
@@ -206,26 +183,18 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         if (interactType == null) {
             var speechOutput = "I cannot understand";
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
             var speechOutput = 'Opened ' + interactType;
 
-            this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+            this.emit(':ask', speechOutput, SKILL_NAME);
         }
-    },
-    'AMAZON.HelpIntent': function () {
-        var speechOutput = "You can say move left or move right, or, you can say exit... What can I help you with?";
-        var reprompt = "What can I help you with?";
-        this.emit(':ask', speechOutput, reprompt);
     },
     'AMAZON.CancelIntent': function () {
         this.emit(':tell', 'Goodbye!');
     },
     'AMAZON.StopIntent': function () {
         this.emit(':tell', 'Goodbye!');
-    },
-    'Unhandled': function () {
-        this.emit(':tell', "Error");
     }
 });
