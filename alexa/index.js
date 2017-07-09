@@ -51,7 +51,7 @@ var newSessionHandler = {
 
         var message = "  What would you like to do?";
 
-        this.emit(':ask', session.currentRoom.description + message;);
+        this.emit(':ask', message);
     },
     "NoIntent" : function () {
         this.emit(':tell', "Goodbye");
@@ -118,7 +118,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         }
         else {
             var response = null;
-            var link = "http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms/" + session.currentRoom.id;
+            var link = "http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms/" + session.currentRoom.roomId;
 
             http.get(link, (res) => {
                 const { statusCode } = res;
@@ -144,7 +144,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
                 res.on('end', () => {
                     try {
                         const parsedData = JSON.parse(rawData);
-                        session.currentRoom = _lodash.clone(parsedData[0]);
+                        session.currentRoom = _lodash.clone(parsedData);
 
                         var description = "You enter a room.  " + session.currentRoom.description;
                         this.emit(':ask', description, SKILL_NAME);
