@@ -2,6 +2,7 @@
 var Alexa = require('alexa-sdk');
 var http = require('http');
 var request = require('request');
+var _lodash = require('lodash');
 
 var APP_ID = undefined;
 var SKILL_NAME = 'dungeon companion';
@@ -38,7 +39,7 @@ var newSessionHandler = {
                 if (!error && response.statusCode == 200) {
 
                 }
-                session = body.data[0];
+                session = _lodash.clone(body.data[0]);
                 self.emit(':ask', session.currentRoom.description); 
             }
         );
@@ -119,16 +120,17 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     },
     'PickUpIntent' : function () {
         var interactType = this.event.request.intent.slots.Item.value;
-
+        session.currentRoom.hasBarrel
         if (interactType == null) {
             var speechOutput = "I cannot understand";
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
+            this.emit(':ask', session.currentRoom.hasBarrel)
             var speechOutput = 'You pick up the ' + interactType;
 
-            this.emit(':ask', speechOutput, SKILL_NAME);
+            //this.emit(':ask', speechOutput, SKILL_NAME);
         }
     },
     'TouchIntent': function () {
