@@ -168,7 +168,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     },
     'PickUpIntent' : function () {
         var interactType = this.event.request.intent.slots.Item.value;
-        session.currentRoom.hasBarrel
+
         if (interactType == null) {
             var speechOutput = "I cannot understand";
 
@@ -231,10 +231,16 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
-        else {
-            var speechOutput = 'You open the ' + interactType;
+        else if (interactType == "Barrel" && session.currentRoom.hasBarrel && session.userID.hasBarrel) {
+            var speechOutput = 'You open the ' + interactType + ' you received a key';
+
+            session.currentRoom.hasBarrel = false;
+            session.userID.hasBarrel = true;
 
             this.emit(':ask', speechOutput, SKILL_NAME);
+        }
+        else {
+            this.emit(':ask', "Invalid option", SKILL_NAME);
         }
     },
     'Unhandled': function () {
