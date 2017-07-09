@@ -40,6 +40,18 @@ var newSessionHandler = {
     },
     "NoIntent" : function () {
         this.emit(':tell', "Goodbye");
+    },
+    'Unhandled': function () {
+        this.emit(':ask', promptToStartMessage, promptToStartMessage);
+    },
+    'AMAZON.HelpIntent': function () {
+        this.emit(':ask', helpMessage, helpMessage);
+    },
+    'AMAZON.CancelIntent': function () {
+        this.emit(':tell', 'Goodbye!');
+    },
+    'AMAZON.StopIntent': function () {
+        this.emit(':tell', 'Goodbye!');
     }
 };
 
@@ -99,7 +111,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         }
     },
     'PickUpIntent' : function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
+        var interactType = this.event.request.intent.slots.Item.value;
 
         if (interactType == null) {
             var speechOutput = "I cannot understand";
@@ -113,7 +125,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         }
     },
     'TouchIntent': function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
+        var interactType = this.event.request.intent.slots.Item.value;
 
         if (interactType == null) {
             var speechOutput = "I cannot understand";
@@ -127,7 +139,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         }
     },
     'DropIntent': function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
+        var interactType = this.event.request.intent.slots.Item.value;
 
         if (interactType == null) {
             var speechOutput = "I cannot understand";
@@ -141,7 +153,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         }
     },
     'LookAtIntent': function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
+        var interactType = this.event.request.intent.slots.Item.value;
 
         if (interactType == null) {
             var speechOutput = "I cannot understand";
@@ -155,7 +167,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         }
     },
     'OpenIntent': function () {
-        var interactType = this.event.request.intent.slots.Interaction.value;
+        var interactType = this.event.request.intent.slots.Item.value;
 
         if (interactType == null) {
             var speechOutput = "I cannot understand";
