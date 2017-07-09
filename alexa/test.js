@@ -1,22 +1,3 @@
-Skip to content
-This repository
-Search
-Pull requests
-Issues
-Marketplace
-Gist
- @mwiginton
- Sign out
- Unwatch 1
-  Star 0
-  Fork 0 mwiginton/alexa-skills
- Code  Issues 0  Pull requests 0  Projects 0  Wiki  Settings Insights 
-Branch: master Find file Copy pathalexa-skills/what-should-i-eat/index.js
-2c7e0ef  on Oct 2, 2016
- Wiginton first commit
-0 contributors
-RawBlameHistory     
-385 lines (311 sloc)  15.2 KB
 /**
  * This sample demonstrates a simple skill built with the Amazon Alexa Skills Kit.
  * The Intent Schema, Custom Slots, and Sample Utterances for this skill, as well as

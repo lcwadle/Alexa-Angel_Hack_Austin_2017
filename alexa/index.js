@@ -5,61 +5,82 @@ var https = require('https');
 var APP_ID = undefined; //OPTIONAL: replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 var SKILL_NAME = 'dungeon companion';
 
-/**
- * Array containing space facts.
- */
+var states = {
+    DESCRIBEMODE: '_DESCRIBEMODE',          // Describes the current room to the user
+    INTERACTMODE: '_INTERACTMODE',          // Asks user what action should be taken
+    OUTPUTMODE: '_OUTPUTMODE'               // Describes effect of action taken
+};
+
+// This is the intial welcome message
+var welcomeMessage = "Welcome to Dungeon Companion, are you ready to play?";
+
+// This is the message that is repeated if the response to the initial welcome message is not heard
+var repeatWelcomeMessage = "Say yes to start the game or no to quit.";
+
+// this is the help message during the setup at the beginning of the game
+var helpMessage = "I will ask you some questions that will identify what you should eat. Want to start now?";
+
+// this is the message that is repeated if Alexa does not hear/understand the reponse to the welcome message
+var promptToStartMessage = "Say yes to continue, or no to end the game.";
 
 exports.handler = function(event, context, callback) {
     var alexa = Alexa.handler(event, context);
     alexa.APP_ID = APP_ID;
-    alexa.registerHandlers(handlers);
+    alexa.registerHandlers(newSessionHandler, startGameHandlers, );
     alexa.execute();
 };
 
-var handlers = {
+// set state to start up and  welcome the user
+var newSessionHandler = {
     'LaunchRequest': function () {
-        var response = null;
+        this.handler.state = states.DESCRIPTIONMODE;
+};
 
-        https.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
-            const { statusCode } = res;
-            const contentType = res.headers['content-type'];
-
-            let error;
-            if (statusCode !== 200) {
-                error = new Error('Request Failed.\n' +
-                                  `Status Code: ${statusCode}`);
-            } else if (!/^application\/json/.test(contentType)) {
-                error = new Error('Invalid content-type.\n' +
-                                  `Expected application/json but received ${contentType}`);
-            }
-            if (error) {
-                console.error(error.message);
-                // consume response data to free up memory
-                res.resume();
-                return;
-            }
-
-            res.setEncoding('utf8');
-            let rawData = '';
-            res.on('data', (chunk) => { rawData += chunk; });
-            res.on('end', () => {
-                try {
-                    const parsedData = JSON.parse(rawData);
-                    var description = parsedData[0]['description'];
-                    this.emit(':tellWithCard', description, SKILL_NAME);
-                } catch (e) {
-                    response = e.message;
-                }
-            });
-        }).on('error', (e) => {
-            console.error(`Got error: ${e.message}`);
-        });
-
-        this.emit(':tellWithCard', response, SKILL_NAME);
-    },
+var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
     'GetRoomIntent' : function () {
         this.emit('GetRoom');
+        this.handler.state = states.ASKMODE;
     },
+    'GetRoom' : function () {
+    var response = null;
+
+    https.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
+        const { statusCode } = res;
+        const contentType = res.headers['content-type'];
+
+        let error;
+        if (statusCode !== 200) {
+            error = new Error('Request Failed.\n' +
+                              `Status Code: ${statusCode}`);
+        } else if (!/^application\/json/.test(contentType)) {
+            error = new Error('Invalid content-type.\n' +
+                              `Expected application/json but received ${contentType}`);
+        }
+        if (error) {
+            console.error(error.message);
+            // consume response data to free up memory
+            res.resume();
+            return;
+        }
+
+        res.setEncoding('utf8');
+        let rawData = '';
+        res.on('data', (chunk) => { rawData += chunk; });
+        res.on('end', () => {
+            try {
+                const parsedData = JSON.parse(rawData);
+                var description = parsedData[0]['description'];
+                this.emit(':tellWithCard', description, SKILL_NAME);
+            } catch (e) {
+                response = e.message;
+            }
+        });
+    }).on('error', (e) => {
+        console.error(`Got error: ${e.message}`);
+    });
+};
+
+var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     'MoveIntent': function () {
         this.emit('move');
     },
@@ -78,11 +99,13 @@ var handlers = {
     'OpenIntent': function () {
         this.emit('open');
     },
-    'GetRoom' : function () {
-        // Get basic room description
-        var speechOutput = "Beginning Room";
-
-        this.emit(':tellWithCard', speechOutput, SKILL_NAME);
+    'AMAZON.HelpIntent': function () {
+        this.handler.state = states.DESCRIPTIONMODE;
+        this.emit(':ask', helpMessage, helpMessage);
+    },
+    'Unhandled': function () {
+        this.handler.state = states.DESCRIPTIONMODE;
+        this.emit(':ask', promptToStartMessage, promptToStartMessage);
     },
     'move': function () {
         var moveType = this.event.request.intent.slots.Movement.value;
