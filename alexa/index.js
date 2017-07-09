@@ -237,7 +237,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else if (interactType == "barrel" && session.currentRoom.hasBarrel) {
-            var speechOutput = 'You open the ' + interactType + ' you received a key';
+            var speechOutput = 'You open the ' + interactType + ' you received a key.  What would you like to do next?';
 
             session.currentRoom.hasBarrel = false;
             session.hasBarrel = true;
@@ -245,11 +245,11 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
-            this.emit(':ask', "Invalid option", SKILL_NAME);
+            this.emit(':ask', "Invalid option, try again.", SKILL_NAME);
         }
     },
     'Unhandled': function () {
-        this.emit(':ask', promptToStartMessage, promptToStartMessage);
+        this.emit(':ask', "I cannot understand, what would you like to do?");
     },
     'AMAZON.HelpIntent': function () {
         this.emit(':ask', helpMessage, helpMessage);
