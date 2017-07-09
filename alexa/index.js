@@ -57,7 +57,6 @@ var newSessionHandler = {
 
 var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     'GetRoomIntent' : function () {
-        this.handler.state = states.INTERACTMODE;
         //this.emit(':ask', "We are here");
         var response = null;
         http.get('http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
@@ -119,9 +118,9 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
-            var speechOutput = 'You pick up ' + interactType;
+            var speechOutput = 'You pick up the ' + interactType;
 
-            this.emit(':ask', event.session.userId, SKILL_NAME);
+            this.emit(':ask', this.event.session.userId, SKILL_NAME);
         }
     },
     'TouchIntent': function () {
@@ -133,7 +132,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
-            var speechOutput = 'You touched ' + interactType;
+            var speechOutput = 'You touched the ' + interactType;
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
@@ -147,7 +146,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
-            var speechOutput = 'You drop ' + interactType;
+            var speechOutput = 'You drop the ' + interactType;
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
@@ -161,7 +160,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
-            var speechOutput = 'You looked at ' + interactType;
+            var speechOutput = 'You looked at the ' + interactType;
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
@@ -175,7 +174,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
         else {
-            var speechOutput = 'You open ' + interactType;
+            var speechOutput = 'You open the ' + interactType;
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
