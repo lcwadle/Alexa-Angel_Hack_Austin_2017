@@ -40,14 +40,18 @@ var newSessionHandler = {
 
                 }
                 session = _lodash.clone(body.data[0]);
-                self.emit(':ask', session.currentRoom.description); 
+                this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
+                //self.emit(':ask', session.currentRoom.description); 
             }
         );
         //this.emit(':ask', welcomeMessage, repeatWelcomeMessage); 
     },
     "YesIntent" : function () {
         this.handler.state = states.INTERACTMODE;
-        this.emit(':ask', "What would you like to do?");
+
+        var message = "  What would you like to do?";
+
+        this.emit(':ask', session.currentRoom.description + message;);
     },
     "NoIntent" : function () {
         this.emit(':tell', "Goodbye");
@@ -114,7 +118,7 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
         }
         else {
             var response = null;
-            var link = "http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms" + session.currentRoom.id;
+            var link = "http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms/" + session.currentRoom.id;
 
             http.get(link, (res) => {
                 const { statusCode } = res;
