@@ -1,6 +1,6 @@
 'use strict';
 var Alexa = require('alexa-sdk');
-var https = require('https');
+var http = require('http');
 
 var APP_ID = undefined; //OPTIONAL: replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
 var SKILL_NAME = 'dungeon companion';
@@ -33,7 +33,7 @@ exports.handler = function(event, context, callback) {
 // set state to start up and  welcome the user
 var newSessionHandler = {
     'LaunchRequest': function () {
-        this.handler.state = states.DESCRIPTIONMODE;
+        this.handler.state = states.DESCRIBEMODE;
         this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
     },
     'AMAZON.HelpIntent': function () {
@@ -48,13 +48,13 @@ var newSessionHandler = {
 
 var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
     'GetRoomIntent' : function () {
-        this.emit('GetRoom');
         this.handler.state = states.INTERACTMODE;
+        this.emit('GetRoom');
+        
     },
     'GetRoom' : function () {
         var response = null;
-
-        https.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
+                https.get('https://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
             const { statusCode } = res;
             const contentType = res.headers['content-type'];
 
@@ -88,6 +88,15 @@ var startGameHandlers = Alexa.CreateStateHandler(states.DESCRIBEMODE, {
         }).on('error', (e) => {
             console.error(`Got error: ${e.message}`);
         });
+        
+    },
+    'AMAZON.HelpIntent': function () {
+        this.handler.state = states.STARTMODE;
+        this.emit(':ask', helpMessage, helpMessage);
+    },
+    'Unhandled': function () {
+        this.handler.state = states.STARTMODE;
+        this.emit(':ask', promptToStartMessage, promptToStartMessage);
     }
 });
 
