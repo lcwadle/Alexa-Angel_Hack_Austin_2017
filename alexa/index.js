@@ -34,6 +34,15 @@ exports.handler = function(event, context, callback) {
 var newSessionHandler = {
     'LaunchRequest': function () {
         this.handler.state = states.DESCRIPTIONMODE;
+        this.emit(':ask', welcomeMessage, repeatWelcomeMessage);
+    },
+    'AMAZON.HelpIntent': function () {
+        this.handler.state = states.STARTMODE;
+        this.emit(':ask', helpMessage, helpMessage);
+    },
+    'Unhandled': function () {
+        this.handler.state = states.STARTMODE;
+        this.emit(':ask', promptToStartMessage, promptToStartMessage);
     }
 };
 
