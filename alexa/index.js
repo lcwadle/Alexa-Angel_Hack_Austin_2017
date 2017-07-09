@@ -3,24 +3,20 @@ var Alexa = require('alexa-sdk');
 var http = require('http');
 var request = require('request');
 
-var APP_ID = undefined; //OPTIONAL: replace with "amzn1.echo-sdk-ams.app.[your-unique-value-here]";
+var APP_ID = undefined;
 var SKILL_NAME = 'dungeon companion';
 
 var states = {        
-    INTERACTMODE: '_INTERACTMODE',          // Asks user what action should be taken
-    OUTPUTMODE: '_OUTPUTMODE'               // Describes effect of action taken
+    INTERACTMODE: '_INTERACTMODE', 
+    OUTPUTMODE: '_OUTPUTMODE'               
 };
 
-// This is the intial welcome message
 var welcomeMessage = "Welcome to Dungeon Companion, are you ready to play?";
 
-// This is the message that is repeated if the response to the initial welcome message is not heard
 var repeatWelcomeMessage = "Say yes to start the game or no to quit.";
 
-// this is the help message during the setup at the beginning of the game
 var helpMessage = "I will ask you some questions that will identify what you should eat. Want to start now?";
 
-// this is the message that is repeated if Alexa does not hear/understand the reponse to the welcome message
 var promptToStartMessage = "Say yes to continue, or no to end the game.";
 
 exports.handler = function(event, context, callback) {
@@ -30,19 +26,21 @@ exports.handler = function(event, context, callback) {
     alexa.execute();
 };
 
-// set state to start up and  welcome the user
 var newSessionHandler = {
     'LaunchRequest': function () {
+        var self = this;
         request.post(
-            'http://angelhack-10-dungeon-companion.mybluemix.net/api/playersessions/sayhi',
+            'http://angelhack-10-dungeon-companion.mybluemix.net/api/playersessions/greet',
             { json: { userID: this.event.session.user.userId } },
             function (error, response, body) {
                 if (!error && response.statusCode == 200) {
-                    console.log(body)
+
                 }
+
+                self.emit(':ask', body.data[0].userID); 
             }
         );
-        this.emit(':ask', welcomeMessage, repeatWelcomeMessage); 
+        //this.emit(':ask', welcomeMessage, repeatWelcomeMessage); 
     },
     "YesIntent" : function () {
         this.handler.state = states.INTERACTMODE;
@@ -67,7 +65,6 @@ var newSessionHandler = {
 
 var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
     'GetRoomIntent' : function () {
-        //this.emit(':ask', "We are here");
         var response = null;
         http.get('http://angelhack-10-dungeon-companion.mybluemix.net/api/rooms', (res) => {
             const { statusCode } = res;
@@ -83,7 +80,6 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
             }
             if (error) {
                 console.error(error.message);
-                // consume response data to free up memory
                 res.resume();
                 return;
             }
