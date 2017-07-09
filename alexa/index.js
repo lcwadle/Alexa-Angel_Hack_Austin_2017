@@ -231,11 +231,16 @@ var interactGameHandlers = Alexa.CreateStateHandler(states.INTERACTMODE, {
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
-        else if (interactType == "Barrel" && session.currentRoom.hasBarrel && session.userID.hasBarrel) {
+        else if (interactType == "barrel" && session.hasBarrel) {
+            var speechOutput = 'You have already opened the ' + interactType + ' what would you like to do?';
+
+            this.emit(':ask', speechOutput, SKILL_NAME);
+        }
+        else if (interactType == "barrel" && session.currentRoom.hasBarrel) {
             var speechOutput = 'You open the ' + interactType + ' you received a key';
 
             session.currentRoom.hasBarrel = false;
-            session.userID.hasBarrel = true;
+            session.hasBarrel = true;
 
             this.emit(':ask', speechOutput, SKILL_NAME);
         }
