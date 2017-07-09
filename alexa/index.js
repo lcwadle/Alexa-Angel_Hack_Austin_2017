@@ -19,6 +19,8 @@ var helpMessage = "I will ask you some questions that will identify what you sho
 
 var promptToStartMessage = "Say yes to continue, or no to end the game.";
 
+var session = null;
+
 exports.handler = function(event, context, callback) {
     var alexa = Alexa.handler(event, context);
     alexa.APP_ID = APP_ID;
@@ -36,8 +38,8 @@ var newSessionHandler = {
                 if (!error && response.statusCode == 200) {
 
                 }
-
-                self.emit(':ask', body.data[0].userID); 
+                session = body.data[0];
+                self.emit(':ask', session.currentRoom.description); 
             }
         );
         //this.emit(':ask', welcomeMessage, repeatWelcomeMessage); 
